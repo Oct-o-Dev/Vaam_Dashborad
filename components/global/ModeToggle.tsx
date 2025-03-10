@@ -29,7 +29,7 @@ export function ModeToggle() {
       className="relative flex items-center justify-center overflow-hidden"
     >
       <Sun
-        className={`absolute h-[1.5rem] w-[1.5rem] transform transition-transform duration-1000 ${
+        className={`absolute h-[1.5rem] w-[1.5rem] transform transition-transform duration-1000${
           theme === "dark"
             ? "rotate-90 scale-0 opacity-0"
             : "rotate-0 scale-100 opacity-100"

@@ -16,6 +16,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { SignedOut, SignInButton, SignUpButton, SignedIn, UserButton } from "@clerk/nextjs";
 
 const navigationItems = [
   { title: "Home", href: "/", description: "" },
@@ -86,6 +87,10 @@ export function Header() {
           ))}
         </div>
 
+        
+
+
+
         {/* Action Buttons */}
         <div className="flex items-center space-x-4">
           {/* Mobile Navigation */}
@@ -105,9 +110,7 @@ export function Header() {
             </Button>
           </div>
           {/* Dark/Light Mode Toggle for PC */}
-          <div className="hidden md:block">
-            <ModeToggle />
-          </div>
+          
         </div>
       </div>
     </header>
