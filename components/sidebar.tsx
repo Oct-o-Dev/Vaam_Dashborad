@@ -9,7 +9,6 @@ import {
   Wallet, 
   CreditCard,
 } from "lucide-react"
-import { SignedOut, SignInButton, SignUpButton, SignedIn, UserButton } from "@clerk/nextjs"
 import { ModeToggle } from "./global/ModeToggle"
 
 const routes = [
@@ -69,15 +68,7 @@ export function Sidebar() {
           ))}
         </div>
         
-        <div className="flex gap-4 mt-40 justify-center">
-          <SignedOut>
-            <SignInButton />
-            <SignUpButton />
-          </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
-        </div>
+        
       </div>
     </div>
   )

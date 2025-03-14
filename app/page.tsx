@@ -1,66 +1,128 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Car, MapPin, Timer } from "lucide-react";
-import { useUser } from "@clerk/nextjs";
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
+import { supabase } from '@/lib/supabase'; // Import the initialized Supabase client
 
 interface Ride {
   id: number;
-  driver_id: string; // Assuming you changed to text
+  driver_id: string;
   pickup: string;
   destination: string;
   earning: number;
   rideTime: number;
 }
 
+interface UserProfile {
+  id: string;
+  display_name: string;
+}
+
 export default function Home() {
-  const { user, isLoaded } = useUser();
+  const router = useRouter();
   const [rides, setRides] = useState<Ride[]>([]);
   const [loading, setLoading] = useState(true);
+  const [userName, setUserName] = useState<string>("");
+  const [user, setUser] = useState<any>(null);
 
+  // Fetch authenticated user
   useEffect(() => {
-    if (isLoaded && user) {
-      console.log("User ID:", user.id); // Debug: Log the user ID
-      const fetchRides = async () => {
-        try {
-          const { data, error } = await supabase
-            .from("Vaam-Dashboard")
-            .select("id, driver_id, pickup, destination, earning, rideTime")
-            .eq("driver_id", user.id)
-            .order("id", { ascending: false })
-            .limit(3);
+    const fetchUser = async () => {
+      const { data: { user }, error } = await supabase.auth.getUser(); // Use the imported `supabase` client
+      if (error) {
+        console.error("Error fetching user:", error);
+        router.push("/signin");
+        return;
+      }
+      setUser(user);
+    };
+    fetchUser();
+  }, [supabase, router]);
 
-          console.log("Data:", data, "Error:", error); // Debug: Log the response
-          if (error) {
-            console.error("Error fetching rides:", error);
-            throw error;
-          }
-          setRides(data || []);
-          console.log("Rides set to:", data); // Debug: Log after setting state
-        } catch (error) {
-          console.error("Error fetching rides:", error);
-        } finally {
-          setLoading(false);
+  // Fetch user profile and rides
+  useEffect(() => {
+    const fetchUserDataAndRides = async () => {
+      if (!user) return;
+
+      try {
+        console.log("Authenticated User:", user); // Log authenticated user info
+
+        // Fetch user profile data
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('display_name')
+          .eq('id', user.id)
+          .single();
+
+        if (profileError) {
+          console.error("Error fetching profile:", profileError);
+        } else if (profileData) {
+          setUserName(profileData.display_name);
         }
-      };
-      fetchRides();
-    }
-  }, [isLoaded, user]);
 
-  if (!isLoaded || loading) return <p>Loading...</p>;
+        // Fetch rides
+        const { data: ridesData, error: ridesError } = await supabase
+          .from("Vaam-Dashboard")
+          .select("id, driver_id, pickup, destination, earning, rideTime")
+          .eq("driver_id", user.id)
+          .order("id", { ascending: false })
+          .limit(3);
+
+        if (ridesError) {
+          console.error("Error fetching rides:", ridesError);
+        } else {
+          setRides(ridesData || []);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserDataAndRides();
+  }, [user, supabase]);
+
+  // Handle sign out
+  const handleSignOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      router.push("/signin");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
+  }
+
+  // Redirect if no user
+  if (!user) return null;
 
   return (
     <main className="p-8">
       <div className="space-y-8">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">
-            Welcome back, {user?.fullName} 👋
-
+            Welcome back, {userName || user.email?.split('@')[0] || "Driver"} 👋
           </h2>
           <p className="text-muted-foreground">
             Here's an overview of your recent activity
           </p>
+          <button
+            onClick={handleSignOut}
+            className="mt-4 bg-red-500 text-white p-2 rounded hover:bg-red-600 transition-colors"
+          >
+            Sign Out
+          </button>
         </div>
 
         <div className="grid gap-4 md:grid-cols-3">
@@ -101,7 +163,6 @@ export default function Home() {
             <CardTitle>Recent Rides</CardTitle>
           </CardHeader>
           <CardContent>
-            
             <div className="space-y-4">
               {rides.length === 0 ? (
                 <p>No recent rides found.</p>
