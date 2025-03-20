@@ -51,14 +51,14 @@ export default function Home() {
         // Fetch user profile data
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('display_name')
+          .select('first_name')
           .eq('id', user.id)
           .single();
 
         if (profileError) {
           console.error("Error fetching profile:", profileError);
         } else if (profileData) {
-          setUserName(profileData.display_name);
+          setUserName(profileData.first_name);
         }
 
         // Fetch rides
