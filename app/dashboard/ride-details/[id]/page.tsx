@@ -17,7 +17,7 @@ export default function RideDetails({ params }: { params: { id: string } }) {
     <main className="min-h-screen  p-6 md:p-8 flex items-center justify-center">
       <div className="max-w-2xl w-full space-y-4">
         {/* Back Button */}
-        <Link href="/">
+        <Link href="/dashboard">
           <button className="flex items-center gap-2 text-black dark:text-white hover:text-[#ffd342] dark:hover:text-[#ffd342] transition-colors">
             <ArrowLeft className="h-5 w-5" />
             <span className="text-sm font-medium">Back to Dashboard</span>

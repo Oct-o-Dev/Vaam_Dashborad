@@ -60,7 +60,7 @@ export default function PaymentMethodPage() {
           </div>
 
           <button 
-            onClick={() => router.push('/add-card')}
+            onClick={() => router.push('dashboard/add-card')}
             className="mt-6 text-primary font-medium flex items-center gap-2 hover:text-[#e6bd3b] transition-colors"
           >
             <CreditCard size={18} /> Add New Card

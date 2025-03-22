@@ -12,25 +12,25 @@ const routes = [
 	{
 		label: "Dashboard",
 		icon: LayoutDashboard,
-		href: "/",
+		href: "/dashboard",
 		color: "text-sky-500",
 	},
 	{
 		label: "My Account",
 		icon: User,
-		href: "/account",
+		href: "/dashboard/account",
 		color: "text-violet-500",
 	},
 	{
 		label: "Earnings",
 		icon: Wallet,
-		href: "/earnings",
+		href: "/dashboard/earnings",
 		color: "text-pink-700",
 	},
 	{
 		label: "Subscription",
 		icon: CreditCard,
-		href: "/subscription",
+		href: "/dashboard/subscription",
 		color: "text-orange-700",
 	},
 ];
